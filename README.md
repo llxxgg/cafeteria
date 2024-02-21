@@ -18,6 +18,7 @@ Start from 2023.11.10
 * metadata使用
 * protobuf使用 ‼️
 * Grpc 如何保持连接的，keepalive？
+* grpc pool 实现(参考https://github.com/processout/grpc-go-pool/blob/master/pool.go)
 
 ## protobuf
 
