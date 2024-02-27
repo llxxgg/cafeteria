@@ -12,6 +12,7 @@ Start from 2023.11.10
 
 ## Todolist
 
+* proto buffers go_package作用
 * 实现remote rpc连接池
 * telemetry
 * metrics
