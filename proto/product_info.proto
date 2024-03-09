@@ -4,9 +4,17 @@ package proto;
 
 option go_package = "./;proto";
 
+import "google/api/annotations.proto";
+
 service ProductInfo {
   rpc addProduct(Product) returns (ProductID);
   rpc getProduct(ProductID) returns (Product);
+  rpc SayHello(HelloRequest) returns (HelloReply) {
+    option (google.api.http) = {
+      post: "/v1/greeter/say_hello"
+      body: "*"
+    };
+  }
 }
 
 message Product {
@@ -18,4 +26,12 @@ message Product {
 
 message ProductID {
   string value = 1;
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
 }
