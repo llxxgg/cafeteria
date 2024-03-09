@@ -3,7 +3,7 @@ module github.com/llxxgg/cafeteria/client
 go 1.19
 
 require (
-	github.com/llxxgg/cafeteria v0.0.0-20240221151524-6feef75c8b98
+	github.com/llxxgg/cafeteria v0.0.0-20240309135028-37ffc5c1efa3
 	google.golang.org/grpc v1.27.0
 )
 

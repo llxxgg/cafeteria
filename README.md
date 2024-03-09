@@ -36,8 +36,10 @@ protoc-gen-go-gin: proto gin http server
 
 struct tag生成: https://github.com/favadi/protoc-go-inject-tag
 
-## makefile
+## grpc-gateway
 
-
+```shell
+curl -X POST -k http://localhost:8080/v1/greeter/say_hello -d '{"name": " chris"}'
+```
 
 

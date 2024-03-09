@@ -2,23 +2,29 @@ package main
 
 import (
 	"context"
+	"fmt"
 	pb "github.com/llxxgg/cafeteria/proto"
 	"log"
 	"net"
+	"net/http"
 
 	"github.com/gofrs/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 const (
-	port = ":50051"
+	port     = ":50051"
+	httpPort = ":8080"
 )
 
 // server is used to implement ecommerce/product_info.
 type server struct {
 	productMap map[string]*pb.Product
+	pb.UnimplementedProductInfoServer
 }
 
 // AddProduct implements ecommerce.AddProduct
@@ -46,14 +52,42 @@ func (s *server) GetProduct(ctx context.Context, in *pb.ProductID) (*pb.Product,
 	return nil, status.Errorf(codes.NotFound, "Product does not exist.", in.Value)
 }
 
+// SayHello sayHello
+func (s *server) SayHello(ctx context.Context, request *pb.HelloRequest) (*pb.HelloReply, error) {
+	return &pb.HelloReply{Message: fmt.Sprintf("hello %s", request.Name)}, nil
+}
+
 func main() {
+
+	s := grpc.NewServer()
+	pb.RegisterProductInfoServer(s, &server{})
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterProductInfoServer(s, &server{})
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	go func() {
+		if err = s.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
+
+	conn, err := grpc.Dial(fmt.Sprintf("localhost%s", port), grpc.WithInsecure())
+	if err != nil {
+		log.Fatalln("Failed to dial server:", err)
 	}
+
+	mux := runtime.NewServeMux()
+	err = pb.RegisterProductInfoHandler(context.Background(), mux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+
+	gwServer := &http.Server{
+		Addr:    httpPort,
+		Handler: mux,
+	}
+
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0" + httpPort)
+	log.Fatalln(gwServer.ListenAndServe())
 }
