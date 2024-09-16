@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
-	github.com/llxxgg/cafeteria v0.0.0-20240309135028-37ffc5c1efa3
 	google.golang.org/grpc v1.53.0
 )
 
